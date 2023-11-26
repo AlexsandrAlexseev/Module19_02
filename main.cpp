@@ -1,35 +1,51 @@
+//
+// Created by Alexs on 26.11.2023.
+//
 #include <iostream>
 #include <fstream>
 #include <string>
 
-int main() {
-    std::string filePath;
+bool isFileExist(const char* fileName) {
+    bool isExist = false;
+    std::ifstream fileReader;
+    fileReader.open(fileName);
 
+    if (fileReader.is_open() && !fileReader.bad()) {
+        isExist = true;
+    }
+
+    fileReader.close();
+
+    return isExist;
+}
+
+void readFileAsText(const char* fileName) {
+    std::string textLine;
+
+    std::cout << "File found.\n" << std::endl;
+
+    std::ifstream fileReader;
+    fileReader.open(fileName,std::ios::binary);
+
+    while (std::getline(fileReader, textLine)) {
+        std::cout << textLine << std::endl;
+    }
+
+    fileReader.close();
+}
+
+int main() {
+    std::cout << "----Text file viewer----" << std::endl;
+    std::string filePath;
     // Ввод пути к текстовому файлу
     std::cout << "Enter the path to the text file: ";
     std::getline(std::cin, filePath);
 
-    // Попытка открыть файл
-    std::ifstream file(filePath, std::ios::binary);
-    if (!file.is_open()) {
-        std::cerr << "Error: Unable to open the file." << std::endl;
-        return 1;
+    if(isFileExist(filePath.c_str())){
+        readFileAsText(filePath.c_str());
     }
-
-    // Чтение и вывод содержимого файла
-    char buffer[1024];
-    while (file.read(buffer, sizeof(buffer))) {
-        std::cout.write(buffer, file.gcount());
-    }
-
-    // Проверка на ошибки чтения файла
-    if (!file.eof() && file.fail()) {
-        std::cerr << "Error: Failed to read the file." << std::endl;
-        return 1;
-    }
-
-    // Закрытие файла
-    file.close();
-
-    return 0;
+    else
+    {
+        std::cerr << "Error: The file was not found." << std::endl;
+    };
 }
